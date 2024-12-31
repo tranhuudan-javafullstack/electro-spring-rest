@@ -1,0 +1,82 @@
+version: '3.9'
+
+services:
+
+  electro-database:
+    container_name: electro-database
+    image: mysql:8.0
+    cap_add:
+      - SYS_NICE
+    environment:
+      MYSQL_ROOT_PASSWORD: 123
+      MYSQL_DATABASE: electro
+      LANG: C.UTF-8
+    ports:
+      - 3306:3306
+    networks:
+      - network
+    volumes:
+      - storage:/var/lib/mysql
+    command: --sql_mode="STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION" --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --general-log=1 --general-log-file=/tmp/mysql-general-log.log
+    healthcheck:
+      # Reference: https://stackoverflow.com/a/74905088
+      test: 'cat /tmp/mysql-general-log.log | grep "Tcp port: 3306"'
+      interval: 5s
+      timeout: 30s
+      retries: 20
+      
+  electro-database2:
+    image: postgres:latest
+    container_name: electro-database2
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres123
+      - POSTGRES_DB=electro
+    ports:
+      - '5432:5432'
+    volumes:
+      - storage2:/var/lib/postgresql/data
+    networks:
+      - network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: danlathangcho@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: Huudantran123@
+    ports:
+      - "5050:80"
+    depends_on:
+      - electro-database2
+    networks:
+      - network
+#  electro-server:
+#    container_name: electro-server
+#    image: electro-server
+#    restart: on-failure
+#    depends_on:
+#      electro-database:
+#        condition: service_healthy
+#    build:
+#      context: ./
+#      dockerfile: Dockerfile
+#    environment:
+#      SPRING_DATASOURCE_URL: jdbc:mysql://127.0.0.1:3306/electro
+#      SPRING_DATASOURCE_USERNAME: root
+#      SPRING_DATASOURCE_PASSWORD: 123
+#    ports:
+#      - 8085:8085
+#    networks:
+#      - network
+
+
+
+volumes:
+  storage:
+    driver: local
+  storage2:
+    driver: local
+
+networks:
+  network:
+    driver: bridge

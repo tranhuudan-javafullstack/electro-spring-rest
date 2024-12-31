@@ -1,0 +1,117 @@
+electro:
+  app:
+    jwtExpirationMs: 10080000
+    jwtRefreshExpirationMs: 86400000
+    jwtSecret: electroSecretKey
+    shipping:
+      ghnApiPath: https://dev-online-gateway.ghn.vn/shiip/public-api/v2
+      ghnShopId: 121327
+      ghnToken: cee52cd3-8a9d-11ed-9ccc-a2c11deda90c
+logging:
+  level:
+    com:
+      electro: 'DEBUG '
+    org:
+      hibernate:
+        SQL: DEBUG
+        type: TRACE
+      springframework:
+        web: TRACE
+    web: TRACE
+  pattern:
+    level: '"trace_id=%mdc{trace_id} span_id=%mdc{span_id} trace_flags=%mdc{trace_flags}
+            %p"'
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: mappings,prometheus
+  health:
+    rabbit:
+      enabled: false
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            requests: true
+    tags:
+      application: app
+paypal:
+  baseUrl: https://api-m.sandbox.paypal.com
+  clientId: ATg9Fx-qiFDopw6uZVdGQN2AOgx_vr0RsDNvrN5hViup8c2BZ6WaDYQPzkZd5DZGW-PsJic3scUdwqCd
+  secret: EGOakP0-AkdLfVx6r5vP9paSUggilXd2tAiuMrpKFU_59A9jzWiGnyY_J56Jcok9KVqzHFzwahZAq5XE
+server:
+  error:
+    include-stacktrace: never
+  port: 8085
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+spring:
+  cache:
+    type: redis
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      auto-commit: true
+      connection-timeout: 10000
+      idle-timeout: 200000
+      max-lifetime: 1100000
+      maximum-pool-size: 50
+      minimum-idle: 10
+    password: 123
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:mysql://127.0.0.1:3306/electro?sessionVariables=sql_mode='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'
+    username: root
+  jmx:
+    default-domain: huudan
+  jpa:
+    defer-datasource-initialization: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        connection:
+          CharSet: UTF-8
+          characterEncoding: UTF-8
+          useUnicode: true
+        dialect: org.hibernate.dialect.MySQL5Dialect
+        format_sql: true
+    show-sql: true
+  mail:
+    host: smtp.gmail.com
+    password: mymeslmspxoogvoo
+    port: 587
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+    username: 20130218@st.hcmuaf.edu.vn
+  redis:
+    host: localhost
+    jedis:
+      pool:
+        max-active: 16
+        max-idle: 8
+        min-idle: 4
+    port: 6379
+    timeout: 2000
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 15MB
+  sql:
+    init:
+      mode: never
+springdoc:
+  show-actuator: false
+  swagger-ui:
+    path: /swagger-ui.html
